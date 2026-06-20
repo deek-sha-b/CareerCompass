@@ -1,0 +1,18 @@
+===========================================================================
+MACHINE LEARNING SALARY PREDICTION MODEL COMPARISON REPORT
+===========================================================================
+
+Dataset: Kaggle Employee Salary Dataset (6,704 raw rows, cleaned to 6698 rows)
+
+Model Evaluation Summary:
+Model Name                     | R^2 Score  | MAE (INR)    | RMSE (INR)  
+---------------------------------------------------------------------------
+Linear Regression              |    84.20% |     15,425 |     21,224
+Decision Tree Regressor        |    93.13% |      6,861 |     13,995
+Random Forest Regressor        |    94.30% |      5,974 |     12,753
+Gradient Boosting Regressor    |    90.33% |     12,407 |     16,604
+
+===========================================================================
+Selected Production Model: Random Forest Regressor
+Saved at: ml/salary_predictor.pkl
+===========================================================================
