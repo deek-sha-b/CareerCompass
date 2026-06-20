@@ -172,6 +172,7 @@ aside {
     font-weight: 800;
     background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -624,6 +625,11 @@ header {
     box-shadow: 0 0 8px var(--success-color);
 }
 
+.roadmap-node.not-started .roadmap-dot {
+    background: var(--card-border);
+    box-shadow: none;
+}
+
 .roadmap-content {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--card-border);
@@ -852,6 +858,7 @@ header {
     background: linear-gradient(to right, #90c3c9, #00bfff, #c37aff);
     /* background: linear-gradient(to right, #9bc2c6, #00f5ff, #c37aff); */
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -1044,6 +1051,7 @@ select.form-control option {
     margin-bottom: 30px;
     background: linear-gradient(to right, var(--text-primary), var(--accent-secondary));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
