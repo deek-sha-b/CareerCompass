@@ -447,54 +447,62 @@ def bookmark_jobs():
 
 # ----------------- SALARY PREDICTOR -----------------
 @app.route('/api/salary/predict', methods=['POST'])
+@jwt_required()
 def predict_salary():
+    user = get_current_user()
+    if not user or not user.profile:
+        return jsonify({
+            'status': 'validation_failed',
+            'message': "This job role does not match your profile recommendations. Please choose a relevant career path."
+        }), 400
+        
     data = request.get_json() or {}
     role = data.get('role', 'Software Engineer')
     stream = data.get('stream', 'Science')
     qualification = data.get('qualification', 'Undergraduate')
     experience_years = float(data.get('experience_years', 0.0))
-    skills_count = int(data.get('skills_count', 5))
     location_type = data.get('location_type', 'metro') # 'metro', 'non-metro', 'remote'
     
-    # 1. Fetch all careers to find the closest matching career to the target job role
-    import re
+    profile = user.profile
+    
+    # Calculate skills count dynamically based on user profile skills list
+    profile_dict = profile.to_dict()
+    profile_skills = profile_dict.get('current_skills', [])
+    skills_count = len(profile_skills) if isinstance(profile_skills, list) else 5
+    
     careers = Career.query.all()
-    if careers:
-        # Calculate similarity of input role to career titles
-        career_titles = [c.title for c in careers]
-        sims = recommender._pure_python_tfidf_cosine_similarity(role, career_titles)
-        max_sim = max(sims) if sims else 0.0
+    career_dicts = [c.to_dict() for c in careers]
+    
+    # 1. Fetch recommended careers for this user's profile
+    recommendations = recommender.get_career_recommendations(profile.to_dict(), career_dicts)
+    
+
+    if isinstance(recommendations, dict) and recommendations.get('status') == 'invalid':
+        return jsonify({
+            'status': 'validation_failed',
+            'message': "This job role does not match your profile recommendations. Please choose a relevant career path."
+        }), 400
         
-        # If similarity is too low, the role is completely unrecognized
-        if max_sim < 0.15:
-            return jsonify({
-                'status': 'validation_failed',
-                'message': f"The entered job role '{role}' is not recognized. Please choose a standard career role."
-            }), 400
-            
-        # Find closest career
-        best_idx = sims.index(max_sim)
-        closest_career = careers[best_idx]
+    if not recommendations:
+        return jsonify({
+            'status': 'validation_failed',
+            'message': "This job role does not match your profile recommendations. Please choose a relevant career path."
+        }), 400
         
-        # 2. Check if the closest career's stream aligns with the input stream
-        from ml.recommender import get_stream_ui_name
-        
-        input_stream_clean = stream.strip()
-        career_stream_clean = closest_career.stream.strip()
-        
-        p_tokens = set(re.split(r'[^a-zA-Z0-9]+', input_stream_clean.lower()))
-        c_tokens = set(re.split(r'[^a-zA-Z0-9]+', career_stream_clean.lower()))
-        # Filter out small words like 'and', 'or', 'the'
-        p_tokens = {t for t in p_tokens if len(t) > 2}
-        c_tokens = {t for t in c_tokens if len(t) > 2}
-        
-        if not p_tokens.intersection(c_tokens):
-            selected_stream_ui = get_stream_ui_name(stream)
-            expected_stream_ui = get_stream_ui_name(closest_career.stream)
-            return jsonify({
-                'status': 'validation_failed',
-                'message': f"The entered job role '{role}' does not match the selected stream '{selected_stream_ui}'. '{closest_career.title}' is related to the '{expected_stream_ui}' stream."
-            }), 400
+    rec_titles = [rec.get('title') for rec in recommendations]
+    
+    # Calculate similarity of input role to recommended career titles
+    sims = recommender._pure_python_tfidf_cosine_similarity(role, rec_titles)
+    max_sim = max(sims) if sims else 0.0
+    
+    role_lower = role.lower().strip()
+    is_substring_match = any(role_lower in t.lower() or t.lower() in role_lower for t in rec_titles)
+    
+    if max_sim < 0.25 and not is_substring_match:
+        return jsonify({
+            'status': 'validation_failed',
+            'message': "This job role does not match your profile recommendations. Please choose a relevant career path."
+        }), 400
 
     prediction = salary_predictor.predict(
         role=role,
@@ -505,6 +513,7 @@ def predict_salary():
         location_type=location_type
     )
     return jsonify(prediction), 200
+
 
 
 # ----------------- RESUME BUILDER ENDPOINTS -----------------

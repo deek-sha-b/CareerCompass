@@ -12,130 +12,6 @@ try:
 except ImportError:
     HAS_SKLEARN = False
 
-def get_skills_set(skills_input):
-    if not skills_input:
-        return set()
-    if isinstance(skills_input, list):
-        return {s.lower().strip() for s in skills_input if s.strip()}
-    if isinstance(skills_input, str):
-        return {s.lower().strip() for s in skills_input.split(',') if s.strip()}
-    return set()
-
-def has_tech_skills(user_skills):
-    # Tech skills list
-    tech_skills_keywords = {
-        'python', 'javascript', 'js', 'java', 'c++', 'c#', 'html', 'css', 'sql', 'git', 
-        'coding', 'programming', 'web development', 'software', 'cloud', 'aws', 
-        'azure', 'docker', 'kubernetes', 'devops', 'algorithms', 'data structures', 
-        'cybersecurity', 'network security', 'database', 'react', 'angular', 
-        'vue', 'node', 'php', 'ruby', 'go', 'rust', 'typescript', 'machine learning', 
-        'data science', 'pandas', 'numpy', 'tensorflow', 'pytorch', 'keras', 
-        'scikit-learn', 'mongodb', 'postgres', 'mysql', 'oracle', 'api', 
-        'figma', 'ui', 'ux', 'wireframing', 'prototyping', 'linux', 'threat intelligence', 
-        'penetration testing', 'firewalls', 'cryptography', 'c', 'r'
-    }
-    return len(user_skills.intersection(tech_skills_keywords)) > 0
-
-CIVIL_SKILLS = {
-    'autocad', 'structural analysis', 'concrete design', 'estimation', 'site supervision', 
-    'civil engineering', 'construction', 'surveying', 'revit', 'staad.pro', 'staad', 
-    'concrete', 'civil'
-}
-
-MECHANICAL_SKILLS = {
-    'cad', 'solidworks', 'thermodynamics', 'fluid mechanics', 'manufacturing processes', 
-    'materials science', 'fea', 'cfd', 'catia', 'robotics', 'mechanical design', 
-    'manufacturing', 'machinery'
-}
-
-ELECTRICAL_SKILLS = {
-    'electrical wiring', 'plc systems', 'industrial equipment', 'blueprint reading', 
-    'wiring', 'electrical engineering', 'electrician', 'plc', 'wiring', 'power circuits', 
-    'industrial grid'
-}
-
-def classify_domain(title, description, required_skills):
-    # Convert all inputs to lowercase string
-    title_lower = title.lower()
-    desc_lower = description.lower()
-    skills_lower = ""
-    if isinstance(required_skills, list):
-        skills_lower = " ".join(s.lower() for s in required_skills)
-    elif isinstance(required_skills, str):
-        skills_lower = required_skills.lower()
-        
-    full_text = f"{title_lower} {desc_lower} {skills_lower}"
-    
-    # Classify based on key terms
-    # Check civil engineering
-    if 'civil' in full_text or 'structural engineer' in full_text or 'construction' in full_text or 'site engineer' in full_text or any(s in skills_lower for s in CIVIL_SKILLS):
-        return 'civil'
-    # Check mechanical engineering
-    if 'mechanical' in full_text or 'manufacturing' in full_text or 'machinery' in full_text or 'solidworks' in full_text or 'thermodynamics' in full_text or any(s in skills_lower for s in MECHANICAL_SKILLS):
-        return 'mechanical'
-    # Check electrical engineering
-    if 'electrical' in full_text or 'electrician' in full_text or 'plc' in full_text or 'wiring' in full_text or any(s in skills_lower for s in ELECTRICAL_SKILLS):
-        return 'electrical'
-        
-    # Check if Tech/IT role
-    tech_keywords = [
-        'software', 'developer', 'programmer', 'coding', 'data scientist', 'data analyst', 
-        'database administrator', 'dba', 'cybersecurity', 'cloud architect', 'devops', 
-        'web dev', 'ux/ui', 'ux designer', 'ui designer', 'figma'
-    ]
-    if any(tk in title_lower for tk in tech_keywords):
-        return 'tech'
-        
-    return 'other'
-
-def is_tech_role(item):
-    # item can be a career or a job dictionary
-    title = item.get('title', '').lower()
-    description = item.get('description', '').lower()
-    stream = item.get('stream', '').lower()
-    
-    # Check if stream is CS/IT/Applications/Engineering (but watch out for Civil/Mech engineering!)
-    # Let's check if the title or stream or description suggests it's a Tech/IT role
-    tech_titles = [
-        'software', 'developer', 'programmer', 'data scientist', 'data analyst', 
-        'database administrator', 'dba', 'cybersecurity', 'cloud architect', 'devops', 
-        'ux/ui', 'ui/ux', 'system architect', 'network architect', 'coder'
-    ]
-    # Check if title matches
-    if any(t in title for t in tech_titles):
-        return True
-        
-    # Also check if stream is CS/Applications
-    if 'computer' in stream or 'information technology' in stream or 'software' in stream:
-        return True
-        
-    # Check skills required for the item
-    skills_field = item.get('required_skills') or item.get('skills_required') or []
-    skills_set = get_skills_set(skills_field)
-    
-    # If the item has multiple tech skills and doesn't have civil/mech/electrical titles
-    tech_skills_keywords = {
-        'python', 'javascript', 'js', 'java', 'c++', 'c#', 'html', 'css', 'sql', 'git', 
-        'coding', 'programming', 'web development', 'software', 'cloud', 'aws', 
-        'azure', 'docker', 'kubernetes', 'devops', 'algorithms', 'data structures', 
-        'cybersecurity', 'network security', 'database', 'react', 'angular', 
-        'vue', 'node', 'php', 'ruby', 'go', 'rust', 'typescript', 'machine learning', 
-        'data science', 'pandas', 'numpy', 'tensorflow', 'pytorch', 'keras', 
-        'scikit-learn', 'mongodb', 'postgres', 'mysql', 'oracle', 'api', 
-        'figma', 'ui', 'ux', 'wireframing', 'prototyping', 'linux', 'threat intelligence', 
-        'penetration testing', 'firewalls', 'cryptography'
-    }
-    
-    # If the title contains core construction/manufacturing keywords:
-    if 'civil' in title or 'mechanical' in title or 'electrician' in title or 'construction' in title or 'manufacturing' in title:
-        return False
-        
-    # Let's check overlap of the career's skills with tech skills
-    if len(skills_set.intersection(tech_skills_keywords)) >= 2:
-        return True
-        
-    return False
-
 def get_stream_ui_name(db_stream):
     if not db_stream:
         return "Unknown"
@@ -486,8 +362,8 @@ class Recommender:
                 base_score = max(base_score, 45.0 + (score * 10.0))
                 
             # Boost score slightly if user's skills overlap with career skills
-            user_skills = get_skills_set(profile.get('current_skills', []))
-            career_skills = get_skills_set(careers[idx].get('required_skills', []))
+            user_skills = set(s.lower().strip() for s in profile.get('current_skills', []))
+            career_skills = set(s.lower().strip() for s in careers[idx].get('required_skills', []))
             if career_skills and user_skills:
                 overlap = user_skills.intersection(career_skills)
                 if overlap:
@@ -498,42 +374,9 @@ class Recommender:
             # Cap at 100
             final_score = min(final_score, 100.0)
             
-            # Calculate technical skill match percentage
-            overlap = user_skills.intersection(career_skills)
-            tech_skill_match_pct = round((len(overlap) / len(career_skills)) * 100.0, 1) if career_skills else 0.0
-            
             career_entry = careers[idx].copy()
             career_entry['match_score'] = final_score
-            career_entry['tech_skill_match_pct'] = tech_skill_match_pct
             ranked_careers.append(career_entry)
-
-        # Apply ZERO CROSS-DOMAIN POLLUTION and Tech/IT restrictions for tech/software profiles
-        user_skills_set = get_skills_set(profile.get('current_skills', []))
-        is_software_profile = has_tech_skills(user_skills_set)
-        is_software_dev_profile = is_software_profile and not (user_skills_set.intersection(CIVIL_SKILLS) or user_skills_set.intersection(MECHANICAL_SKILLS) or user_skills_set.intersection(ELECTRICAL_SKILLS))
-        
-        filtered_ranked_careers = []
-        for c in ranked_careers:
-            c_title = c.get('title', '')
-            c_desc = c.get('description', '')
-            c_domain = classify_domain(c_title, c_desc, c.get('required_skills', []))
-            
-            if is_software_profile:
-                # 1. Zero Cross-domain pollution
-                if c_domain == 'civil' and not user_skills_set.intersection(CIVIL_SKILLS):
-                    continue
-                if c_domain == 'mechanical' and not user_skills_set.intersection(MECHANICAL_SKILLS):
-                    continue
-                if c_domain == 'electrical' and not user_skills_set.intersection(ELECTRICAL_SKILLS):
-                    continue
-                    
-            if is_software_dev_profile:
-                # 2. Strict Tech/IT matches for pure software dev profiles
-                if not is_tech_role(c):
-                    continue
-            
-            filtered_ranked_careers.append(c)
-        ranked_careers = filtered_ranked_careers
             
         # Determine maximum confidence score among matching stream careers
         max_confidence_score = 0.0
@@ -593,8 +436,8 @@ class Recommender:
                     compatible_careers.append(c)
             ranked_careers = compatible_careers
 
-        # Sort by tech_skill_match_pct descending, and then by match_score descending
-        ranked_careers.sort(key=lambda x: (x.get('tech_skill_match_pct', 0.0), x.get('match_score', 0.0)), reverse=True)
+        # Sort by match score descending
+        ranked_careers.sort(key=lambda x: x['match_score'], reverse=True)
         return ranked_careers[:limit]
 
     def get_job_recommendations(self, profile, jobs, limit=5):
@@ -633,8 +476,8 @@ class Recommender:
         ranked_jobs = []
         for idx, score in enumerate(similarities):
             # Calculate skills overlapping percentage
-            user_skill_set = get_skills_set(profile.get('current_skills', []))
-            job_skill_set = get_skills_set(jobs[idx].get('skills_required', []))
+            user_skill_set = set(s.lower().strip() for s in profile.get('current_skills', []))
+            job_skill_set = set(s.lower().strip() for s in jobs[idx].get('skills_required', []))
             
             overlap_bonus = 1.0
             if job_skill_set:
@@ -654,42 +497,9 @@ class Recommender:
             final_score = round(float(score) * overlap_bonus * exp_mult * 100, 1)
             final_score = min(final_score, 100.0)
             
-            # Calculate technical skill match percentage
-            overlap = user_skill_set.intersection(job_skill_set)
-            tech_skill_match_pct = round((len(overlap) / len(job_skill_set)) * 100.0, 1) if job_skill_set else 0.0
-            
             job_entry = jobs[idx].copy()
             job_entry['match_score'] = final_score
-            job_entry['tech_skill_match_pct'] = tech_skill_match_pct
             ranked_jobs.append(job_entry)
-            
-        # Apply ZERO CROSS-DOMAIN POLLUTION and Tech/IT restrictions for tech/software profiles
-        user_skills_set = get_skills_set(profile.get('current_skills', []))
-        is_software_profile = has_tech_skills(user_skills_set)
-        is_software_dev_profile = is_software_profile and not (user_skills_set.intersection(CIVIL_SKILLS) or user_skills_set.intersection(MECHANICAL_SKILLS) or user_skills_set.intersection(ELECTRICAL_SKILLS))
-        
-        filtered_ranked_jobs = []
-        for j in ranked_jobs:
-            j_title = j.get('title', '')
-            j_desc = j.get('description', '')
-            j_domain = classify_domain(j_title, j_desc, j.get('skills_required', []))
-            
-            if is_software_profile:
-                # 1. Zero Cross-domain pollution
-                if j_domain == 'civil' and not user_skills_set.intersection(CIVIL_SKILLS):
-                    continue
-                if j_domain == 'mechanical' and not user_skills_set.intersection(MECHANICAL_SKILLS):
-                    continue
-                if j_domain == 'electrical' and not user_skills_set.intersection(ELECTRICAL_SKILLS):
-                    continue
-                    
-            if is_software_dev_profile:
-                # 2. Strict Tech/IT matches
-                if not is_tech_role(j):
-                    continue
-            
-            filtered_ranked_jobs.append(j)
-        ranked_jobs = filtered_ranked_jobs
             
         # Filter job recommendations by stream compatibility
         p_stream = profile.get('stream', '').strip()
@@ -707,6 +517,5 @@ class Recommender:
                         compatible_jobs.append(j)
                 ranked_jobs = compatible_jobs
 
-        # Sort by tech_skill_match_pct descending, and then by match_score descending
-        ranked_jobs.sort(key=lambda x: (x.get('tech_skill_match_pct', 0.0), x.get('match_score', 0.0)), reverse=True)
+        ranked_jobs.sort(key=lambda x: x['match_score'], reverse=True)
         return ranked_jobs[:limit]

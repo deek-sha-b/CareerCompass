@@ -5,309 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
-const RoadmapRules = {
-    QUAL_RANKS: {
-        "": 0,
-        "Higher Secondary": 1,
-        "Diploma": 2,
-        "Undergraduate": 3,
-        "Postgraduate": 4,
-        "Research/PhD": 5,
-        "Working Professional": 6
-    },
-    stepRules: {
-        // Software Engineer
-        "acquire degree": { minQual: "Undergraduate" },
-        "master coding fundamentals": { minQual: "Undergraduate", requiredSkills: ["Python", "JavaScript", "Java", "C++", "DSA"] },
-        "build portfolio projects": { minQual: "Undergraduate", requiredSkills: ["Git", "GitHub"] },
-        "internship placement": { minQual: "Undergraduate", minExperience: 0.5 },
-        "full-time job search": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Data Scientist
-        "core education": { minQual: "Undergraduate" },
-        "math & coding foundations": { minQual: "Undergraduate", requiredSkills: ["Python", "R", "Math", "Statistics"] },
-        "data analysis & wrangling": { minQual: "Undergraduate", requiredSkills: ["SQL", "Pandas", "NumPy"] },
-        "machine learning methods": { minQual: "Undergraduate", requiredSkills: ["Machine Learning", "Deep Learning"] },
-        "capstone portfolio": { minQual: "Undergraduate", requiredSkills: ["Kaggle", "GitHub"] },
-
-        // Chartered Accountant (CA)
-        "register with icai": { minQual: "Higher Secondary" },
-        "pass intermediate exam": { minQual: "Undergraduate" },
-        "articleship training": { minQual: "Undergraduate", minExperience: 2.0 },
-        "ca final examination": { minQual: "Undergraduate", minExperience: 2.5 },
-        "membership enrollment": { minQual: "Undergraduate", minExperience: 3.0 },
-
-        // UX/UI Designer
-        "learn figma & design basics": { minQual: "Undergraduate", requiredSkills: ["Figma"] },
-        "understand ux research": { minQual: "Undergraduate", requiredSkills: ["Wireframing", "User Research"] },
-        "redesign projects": { minQual: "Undergraduate", requiredSkills: ["Prototyping"] },
-        "build ux portfolio": { minQual: "Undergraduate", requiredSkills: ["Figma"] },
-        "apply for junior ux/ui roles": { minQual: "Undergraduate", minExperience: 0.5 },
-
-        // Civil/Structural Engineer
-        "academic degree": { minQual: "Undergraduate" },
-        "learn cad software": { minQual: "Undergraduate", requiredSkills: ["AutoCAD", "Revit", "STAAD"] },
-        "site internships": { minQual: "Undergraduate", minExperience: 0.5 },
-        "learn code standards": { minQual: "Undergraduate", requiredSkills: ["Project Management"] },
-        "associate engineer role": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Pharmacist
-        "earn pharmacy qualification": { minQual: "Undergraduate" },
-        "state council registration": { minQual: "Undergraduate" },
-        "clinical/retail training": { minQual: "Undergraduate", minExperience: 0.5 },
-        "drug storage familiarization": { minQual: "Undergraduate", requiredSkills: ["Inventory Management"] },
-        "establish practice": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Corporate Lawyer
-        "law degree": { minQual: "Undergraduate" },
-        "bar exam clearance": { minQual: "Undergraduate" },
-        "internships under lawyers": { minQual: "Undergraduate", minExperience: 0.5 },
-        "master legal drafting": { minQual: "Undergraduate", requiredSkills: ["Contract Drafting", "Legal Research"] },
-        "associate in law firm": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Agricultural Consultant
-        "agriculture education": { minQual: "Undergraduate" },
-        "field internships": { minQual: "Undergraduate", minExperience: 0.5 },
-        "learn modern farming tech": { minQual: "Undergraduate", requiredSkills: ["Sustainable Agriculture"] },
-        "environmental regulations": { minQual: "Undergraduate" },
-        "consultant practice": { minQual: "Undergraduate", minExperience: 2.0 },
-
-        // Secondary School Teacher
-        "undergraduate degree": { minQual: "Undergraduate" },
-        "professional b.ed": { minQual: "Undergraduate" },
-        "teacher eligibility test": { minQual: "Undergraduate" },
-        "student teaching practice": { minQual: "Undergraduate", minExperience: 0.5 },
-        "school application": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Hotel Manager
-        "hotel management degree": { minQual: "Undergraduate" },
-        "department rotations": { minQual: "Undergraduate", minExperience: 0.5 },
-        "supervisor role": { minQual: "Undergraduate", minExperience: 1.5 },
-        "financial management": { minQual: "Undergraduate", requiredSkills: ["Budgeting"] },
-        "general manager": { minQual: "Undergraduate", minExperience: 4.0 },
-
-        // Cloud Architect
-        "acquire core cs degree": { minQual: "Undergraduate" },
-        "learn linux & networking": { minQual: "Undergraduate", requiredSkills: ["Linux", "Networking"] },
-        "master containerization": { minQual: "Undergraduate", requiredSkills: ["Docker", "Kubernetes"] },
-        "cloud certification": { minQual: "Undergraduate", requiredSkills: ["Cloud Computing", "AWS", "Azure"] },
-        "system design practice": { minQual: "Undergraduate", minExperience: 3.0 },
-
-        // Digital Marketer
-        "learn marketing principles": { minQual: "Undergraduate" },
-        "get google & hubspot certified": { minQual: "Undergraduate", requiredSkills: ["SEO", "SEM"] },
-        "run a web project": { minQual: "Undergraduate", requiredSkills: ["Content Writing"] },
-        "learn analytics": { minQual: "Undergraduate", requiredSkills: ["Google Analytics"] },
-        "digital associate": { minQual: "Undergraduate", minExperience: 0.5 },
-
-        // Graphic Designer
-        "learn core design principles": { minQual: "Undergraduate" },
-        "master vector & raster tools": { minQual: "Undergraduate", requiredSkills: ["Photoshop", "Illustrator"] },
-        "create design briefs": { minQual: "Undergraduate", requiredSkills: ["Typography", "Branding"] },
-        "publish design portfolio": { minQual: "Undergraduate", requiredSkills: ["Visual Design"] },
-        "freelance or junior artist": { minQual: "Undergraduate", minExperience: 0.5 },
-
-        // Product Manager
-        "build domain knowledge": { minQual: "Undergraduate" },
-        "work in tech or business": { minQual: "Undergraduate", minExperience: 1.0 },
-        "master product toolkits": { minQual: "Undergraduate", requiredSkills: ["Jira", "Agile"] },
-        "transition or mba": { minQual: "Postgraduate", minExperience: 2.0 },
-        "product management lead": { minQual: "Undergraduate", minExperience: 3.0 },
-
-        // Financial Analyst
-        "finance core education": { minQual: "Undergraduate" },
-        "advanced excel modeling": { minQual: "Undergraduate", requiredSkills: ["Excel", "Financial Modeling"] },
-        "study corporate accounts": { minQual: "Undergraduate", requiredSkills: ["Accounting", "Valuation"] },
-        "enroll in cfa program": { minQual: "Undergraduate" },
-        "investment analyst role": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // HR Specialist
-        "acquire degree": { minQual: "Undergraduate" },
-        "sourcing & screening practice": { minQual: "Undergraduate", requiredSkills: ["Recruiting"] },
-        "understand labor laws": { minQual: "Undergraduate", requiredSkills: ["HR Policies"] },
-        "hr internship": { minQual: "Undergraduate", minExperience: 0.5 },
-        "hr associate": { minQual: "Undergraduate", minExperience: 0.5 },
-
-        // Doctor
-        "clear neet exam": { minQual: "Higher Secondary" },
-        "mbbs residency": { minQual: "Undergraduate" },
-        "compulsory internship": { minQual: "Undergraduate", minExperience: 1.0 },
-        "medical council license": { minQual: "Undergraduate", minExperience: 1.0 },
-        "post-graduation md/ms": { minQual: "Postgraduate" },
-
-        // Mechanical Engineer
-        "engineering degree": { minQual: "Undergraduate" },
-        "master cad modelling": { minQual: "Undergraduate", requiredSkills: ["CAD", "SolidWorks"] },
-        "factory internships": { minQual: "Undergraduate", minExperience: 0.5 },
-        "learn testing tools": { minQual: "Undergraduate", requiredSkills: ["Thermodynamics"] },
-        "design/quality engineer": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Content Writer
-        "obtain degree": { minQual: "Undergraduate" },
-        "build writing portfolio": { minQual: "Undergraduate", requiredSkills: ["Content Writing"] },
-        "learn seo basics": { minQual: "Undergraduate", requiredSkills: ["SEO"] },
-        "freelancing": { minQual: "Undergraduate", minExperience: 0.5 },
-        "full-time copywriting": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Clinical Psychologist
-        "bachelor's degree": { minQual: "Undergraduate" },
-        "master's degree": { minQual: "Postgraduate" },
-        "m.phil / license course": { minQual: "Research/PhD" },
-        "supervised clinical training": { minQual: "Postgraduate", minExperience: 1.0 },
-        "register & practice": { minQual: "Postgraduate", minExperience: 2.0 },
-
-        // Chef / Culinary Artist
-        "culinary training": { minQual: "Undergraduate" },
-        "kitchen entry": { minQual: "Undergraduate", minExperience: 0.5 },
-        "section lead": { minQual: "Undergraduate", minExperience: 1.5 },
-        "sous chef role": { minQual: "Undergraduate", minExperience: 3.0 },
-        "executive chef": { minQual: "Undergraduate", minExperience: 4.0 },
-
-        // Industrial Electrician
-        "vocational training": { minQual: "Diploma" },
-        "apprenticeship": { minQual: "Diploma", minExperience: 0.5 },
-        "electrician license": { minQual: "Diploma", minExperience: 1.0 },
-        "industrial maintenance": { minQual: "Diploma", minExperience: 2.0 },
-        "senior electrician / foreman": { minQual: "Diploma", minExperience: 3.0 },
-
-        // Database Administrator
-        "core education": { minQual: "Undergraduate" },
-        "sql mastery": { minQual: "Undergraduate", requiredSkills: ["SQL"] },
-        "learn db platforms": { minQual: "Undergraduate", requiredSkills: ["Oracle", "PostgreSQL", "MySQL"] },
-        "certifications": { minQual: "Undergraduate" },
-        "junior dba role": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Cybersecurity Analyst
-        "acquire cs degree": { minQual: "Undergraduate" },
-        "networking & os fundamentals": { minQual: "Undergraduate", requiredSkills: ["Linux", "Networking"] },
-        "cyber security certs": { minQual: "Undergraduate", requiredSkills: ["Network Security", "Cryptography"] },
-        "hands-on laboratories": { minQual: "Undergraduate" },
-        "security analyst placement": { minQual: "Undergraduate", minExperience: 1.0 },
-
-        // Fashion Designer
-        "fashion education": { minQual: "Undergraduate" },
-        "master designing tools": { minQual: "Undergraduate", requiredSkills: ["Fashion Design"] },
-        "apparel industry internship": { minQual: "Undergraduate", minExperience: 0.5 },
-        "develop portfolio": { minQual: "Undergraduate", requiredSkills: ["Fashion Design"] },
-        "launch brand / design role": { minQual: "Undergraduate", minExperience: 1.0 }
-    }
-};
-
 const App = {
     currentView: 'home',
     currentUser: null,
     
-    evaluateStepStatus(userProfile, step) {
-        if (!userProfile) {
-            return 'not-started';
-        }
-
-        const titleNormalized = step.title.trim().toLowerCase();
-        const descNormalized = step.desc.trim().toLowerCase();
-
-        // 1. Retrieve rule for this step
-        let rule = RoadmapRules.stepRules[titleNormalized];
-
-        // If no direct rule found, try fallback rule matching using keywords
-        if (!rule) {
-            rule = {};
-            if (titleNormalized.includes("degree") || titleNormalized.includes("bachelor") || titleNormalized.includes("undergraduate") ||
-                descNormalized.includes("degree") || descNormalized.includes("bachelor") || descNormalized.includes("undergraduate")) {
-                rule.minQual = "Undergraduate";
-            } else if (titleNormalized.includes("master") || titleNormalized.includes("postgraduate") ||
-                       descNormalized.includes("master") || descNormalized.includes("postgraduate")) {
-                rule.minQual = "Postgraduate";
-            } else if (titleNormalized.includes("phd") || titleNormalized.includes("ph.d") || titleNormalized.includes("doctoral") || titleNormalized.includes("m.phil") ||
-                       descNormalized.includes("phd") || descNormalized.includes("ph.d") || descNormalized.includes("doctoral") || descNormalized.includes("m.phil")) {
-                rule.minQual = "Research/PhD";
-            } else if (titleNormalized.includes("diploma") || titleNormalized.includes("polytechnic") ||
-                       descNormalized.includes("diploma") || descNormalized.includes("polytechnic")) {
-                rule.minQual = "Diploma";
-            }
-
-            // Fallback for experience years: try to find number of years in description
-            const yearMatch = descNormalized.match(/(\d+(?:\.\d+)?)\s*year/);
-            if (yearMatch) {
-                rule.minExperience = parseFloat(yearMatch[1]);
-            }
-        }
-
-        // 2. Validate against criteria
-        // Age validation
-        if (rule.minAge !== undefined) {
-            const userAge = parseInt(userProfile.age) || 0;
-            if (userAge < rule.minAge) {
-                return 'not-started';
-            }
-        }
-
-        // Qualification validation
-        if (rule.minQual !== undefined) {
-            const userQual = userProfile.qualification || '';
-            const userRank = RoadmapRules.QUAL_RANKS[userQual] || 0;
-            const requiredRank = RoadmapRules.QUAL_RANKS[rule.minQual] || 0;
-            if (userRank < requiredRank) {
-                return 'not-started';
-            }
-        }
-
-        // Experience validation
-        if (rule.minExperience !== undefined) {
-            const userExp = parseFloat(userProfile.experience_years) || 0.0;
-            if (userExp < rule.minExperience) {
-                return 'not-started';
-            }
-        }
-
-        // Skills validation
-        // Normalize user skills list
-        const rawSkills = userProfile.current_skills || [];
-        const cleanUserSkills = (Array.isArray(rawSkills) ? rawSkills : 
-                                (typeof rawSkills === 'string' ? rawSkills.split(',') : [])
-                               ).map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
-
-        if (rule.requiredSkills && rule.requiredSkills.length > 0) {
-            // Check if user has at least one of the required skills
-            const hasSkill = rule.requiredSkills.some(skill => 
-                cleanUserSkills.includes(skill.toLowerCase())
-            );
-            if (!hasSkill) {
-                return 'not-started';
-            }
-        }
-
-        // Fallback skill check
-        // If the user already has the skill that this step focuses on, mark as completed
-        const skillMatch = cleanUserSkills.some(skill => {
-            const hasSpecial = /[^a-z0-9_]/i.test(skill);
-            if (hasSpecial) {
-                return titleNormalized.includes(skill) || descNormalized.includes(skill);
-            } else {
-                const escaped = skill.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                const regex = new RegExp('\\b' + escaped + '\\b', 'i');
-                return regex.test(titleNormalized) || regex.test(descNormalized);
-            }
-        });
-
-        // If the step is an educational/degree step, and qualification matches, it can be marked completed
-        const isEduStep = titleNormalized.includes("degree") || titleNormalized.includes("education") || 
-                           titleNormalized.includes("qualification") || titleNormalized.includes("bachelor") || 
-                           titleNormalized.includes("master") || titleNormalized.includes("phd") ||
-                           titleNormalized.includes("residency") || titleNormalized.includes("school") ||
-                           titleNormalized.includes("b.ed") || titleNormalized.includes("neet") ||
-                           titleNormalized.includes("training") || titleNormalized.includes("exam") ||
-                           descNormalized.includes("degree") || descNormalized.includes("qualification") || 
-                           descNormalized.includes("diploma") || descNormalized.includes("residency") ||
-                           titleNormalized.includes("articleship") || descNormalized.includes("articleship") ||
-                           titleNormalized.includes("apprenticeship") || descNormalized.includes("apprenticeship");
-
-        if (skillMatch || isEduStep) {
-            return 'completed';
-        }
-
-        return 'not-started';
-    },
-
     init() {
         this.setupThemeToggle();
         this.setupAuthUI();
@@ -729,6 +430,7 @@ const App = {
                 
                 // Fill details inputs
                 document.getElementById('profile-name').value = profile.full_name || '';
+                document.getElementById('profile-age').value = profile.age || '';
                 document.getElementById('profile-stream-select').value = profile.stream || '';
                 document.getElementById('profile-qual-select').value = profile.qualification || '';
                 document.getElementById('profile-skills').value = profile.current_skills.join(', ');
@@ -798,6 +500,7 @@ const App = {
 
         const profileData = {
             full_name: document.getElementById('profile-name').value.trim(),
+            age: parseInt(document.getElementById('profile-age').value) || null,
             stream: stream,
             qualification: qualification,
             current_skills: skillsRaw.split(',').map(s => s.trim()).filter(s => s.length > 0),
@@ -1082,20 +785,85 @@ const App = {
             
             document.getElementById('roadmap-career-title').innerText = data.career_title;
             
-            // Force load profile if currentUser not loaded
-            if (!this.currentUser && Auth.isLoggedIn()) {
-                this.currentUser = await Auth.getProfile();
-            }
-
-            // Determine the status for each step using Rule-Based Validation Engine
-            const stepsStatus = data.roadmap_steps.map((step) => {
-                return this.evaluateStepStatus(this.currentUser, step);
+            const qual = this.currentUser ? this.currentUser.qualification : '';
+            const userSkills = this.currentUser && this.currentUser.current_skills ? 
+                               (Array.isArray(this.currentUser.current_skills) ? this.currentUser.current_skills : 
+                               (typeof this.currentUser.current_skills === 'string' ? this.currentUser.current_skills.split(',') : [])) : [];
+            const cleanUserSkills = userSkills.map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
+            
+            const hasDiploma = ['Diploma', 'Undergraduate', 'Postgraduate', 'Research/PhD', 'Working Professional'].includes(qual);
+            const hasUndergrad = ['Undergraduate', 'Postgraduate', 'Research/PhD', 'Working Professional'].includes(qual);
+            const hasPostgrad = ['Postgraduate', 'Research/PhD', 'Working Professional'].includes(qual);
+            const hasPhD = ['Research/PhD', 'Working Professional'].includes(qual);
+            const isProfessional = ['Working Professional'].includes(qual);
+            
+            // Determine the status for each step
+            const stepsStatus = data.roadmap_steps.map((step, idx) => {
+                const title = step.title.toLowerCase();
+                const desc = step.desc.toLowerCase();
+                
+                // 1. Skill Match Check: If the user already has the skill(s) that this step focuses on, mark as completed
+                const skillMatch = cleanUserSkills.some(skill => {
+                    const hasSpecial = /[^a-z0-9_]/i.test(skill);
+                    if (hasSpecial) {
+                        return title.includes(skill) || desc.includes(skill);
+                    } else {
+                        const escaped = skill.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        const regex = new RegExp('\\b' + escaped + '\\b', 'i');
+                        return regex.test(title) || regex.test(desc);
+                    }
+                });
+                
+                if (skillMatch) {
+                    return 'completed';
+                }
+                
+                // 2. Academic/Professional Qualification Match Check
+                if (isProfessional) {
+                    if (title.includes('degree') || title.includes('bachelor') || title.includes('undergraduate') || 
+                        title.includes('master') || title.includes('postgraduate') || title.includes('phd') || 
+                        title.includes('school') || title.includes('education') || title.includes('college') ||
+                        title.includes('internship') || title.includes('articleship') || title.includes('training') ||
+                        desc.includes('degree') || desc.includes('internship') || desc.includes('articleship') || desc.includes('training')) {
+                        return 'completed';
+                    }
+                }
+                
+                if (hasPhD) {
+                    if (title.includes('ph.d') || title.includes('phd') || title.includes('research') || title.includes('doctoral') || desc.includes('ph.d') || desc.includes('phd') || desc.includes('research') || desc.includes('doctoral')) {
+                        return 'completed';
+                    }
+                }
+                
+                if (hasPostgrad) {
+                    if (title.includes('master') || title.includes('postgraduate') || title.includes('mba') || title.includes('m.tech') || title.includes('m.sc') || title.includes('m.pharm') || title.includes('llm') || title.includes('pass intermediate exam') || desc.includes('master\'s degree') || desc.includes('postgraduate degree')) {
+                        return 'completed';
+                    }
+                }
+                
+                if (hasUndergrad) {
+                    if (title.includes('degree') || title.includes('bachelor') || title.includes('undergraduate') || title.includes('college') || title.includes('b.tech') || title.includes('b.e') || title.includes('bca') || title.includes('b.sc') || title.includes('b.com') || title.includes('bba') || title.includes('llb') || title.includes('ba-llb') || title.includes('b.pharm') || title.includes('d.pharm') || title.includes('academic degree') || title.includes('earn pharmacy qualification') || title.includes('law degree') || title.includes('agriculture education') || desc.includes('bachelor\'s degree') || desc.includes('undergraduate degree')) {
+                        return 'completed';
+                    }
+                }
+                
+                if (hasDiploma) {
+                    if (title.includes('diploma') || title.includes('polytechnic') || desc.includes('diploma') || desc.includes('polytechnic')) {
+                        return 'completed';
+                    }
+                }
+                
+                if (qual && (title.includes('school') || title.includes('higher secondary') || title.includes('12th') || title.includes('register with icai') || desc.includes('school') || desc.includes('higher secondary') || desc.includes('12th'))) {
+                    return 'completed';
+                }
+                
+                return 'pending';
             });
             
-            // Find the first index that is 'not-started' to mark as the 'active' focus
-            let firstActiveIdx = stepsStatus.indexOf('not-started');
+            // Find the first index that is still 'pending' to mark as the 'active' focus
+            let firstActiveIdx = stepsStatus.indexOf('pending');
             if (firstActiveIdx === -1) {
-                firstActiveIdx = -1;
+                firstActiveIdx = data.roadmap_steps.length - 1;
             }
             
             data.roadmap_steps.forEach((step, idx) => {
@@ -1109,8 +877,6 @@ const App = {
                     statusText = ' <span class="badge" style="background:var(--success-color); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:8px;"><i class="fa-solid fa-check"></i> Completed</span>';
                 } else if (statusClass === 'active') {
                     statusText = ' <span class="badge" style="background:var(--accent-primary); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:8px;">Active Focus</span>';
-                } else if (statusClass === 'not-started') {
-                    statusText = ' <span class="badge" style="background:rgba(255,255,255,0.05); color:var(--text-muted); font-size:10px; padding:2px 6px; border-radius:4px; margin-left:8px; border: 1px solid rgba(255,255,255,0.05);">Not Started</span>';
                 }
                 
                 timeline.innerHTML += `
@@ -1294,7 +1060,7 @@ const App = {
         const stream = document.getElementById('sal-stream').value;
         const qualification = document.getElementById('sal-qual').value;
         const experience = parseFloat(document.getElementById('sal-experience').value) || 0.0;
-        const skillsCount = parseInt(document.getElementById('sal-skills-count').value) || 5;
+        const skillsCount = (this.currentUser && Array.isArray(this.currentUser.current_skills)) ? this.currentUser.current_skills.length : 5;
         const locationType = document.getElementById('sal-location').value;
         
         if (!role) {
@@ -1305,7 +1071,10 @@ const App = {
         try {
             const res = await fetch('/api/salary/predict', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...Auth.getAuthHeaders()
+                },
                 body: JSON.stringify({
                     role, stream, qualification, experience_years: experience, skills_count: skillsCount, location_type: locationType
                 })
@@ -1321,8 +1090,6 @@ const App = {
             document.getElementById('sal-prediction-result-card').style.display = 'block';
             document.getElementById('sal-predicted-salary').innerText = data.predicted_salary_range;
             document.getElementById('sal-matched-role').innerText = data.role;
-            document.getElementById('sal-accuracy-r2').innerText = data.model_accuracy_r2 || '94.2%';
-            document.getElementById('sal-accuracy-mae').innerText = data.model_mae || '₹38,400';
             
             const factorsContainer = document.getElementById('sal-factors-breakdown');
             factorsContainer.innerHTML = '';
@@ -1400,12 +1167,21 @@ const App = {
         const eduSchool = document.getElementById('res-edu-school').value;
         const eduDegree = document.getElementById('res-edu-degree').value;
         const eduYear = document.getElementById('res-edu-year').value;
+        const eduCgpa = document.getElementById('res-edu-cgpa') ? document.getElementById('res-edu-cgpa').value : '';
         
         // Experience List compilation
         const expCompany = document.getElementById('res-exp-company').value;
         const expRole = document.getElementById('res-exp-role').value;
         const expDesc = document.getElementById('res-exp-desc').value;
         
+        // Projects List
+        const projTitle = document.getElementById('res-proj-title') ? document.getElementById('res-proj-title').value : '';
+        const projDesc = document.getElementById('res-proj-desc') ? document.getElementById('res-proj-desc').value : '';
+
+        // Certifications List
+        const certNameField = document.getElementById('res-cert-name');
+        const certifications = certNameField ? certNameField.value.split(',').map(s => s.trim()).filter(s => s) : [];
+
         // Skills List
         const skills = document.getElementById('res-skills').value.split(',').map(s => s.trim()).filter(s => s);
         
@@ -1417,10 +1193,11 @@ const App = {
         const prevEdu = document.getElementById('prev-education');
         prevEdu.innerHTML = '';
         if (eduSchool || eduDegree) {
+            const cgpaText = eduCgpa ? ` | CGPA/Grade: ${eduCgpa}` : '';
             prevEdu.innerHTML = `
                 <div style="margin-bottom:8px;">
                     <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                        <span>${eduDegree || 'Degree'}</span>
+                        <span>${eduDegree || 'Degree'}${cgpaText}</span>
                         <span>${eduYear || 'Year'}</span>
                     </div>
                     <div>${eduSchool || 'Institution Name'}</div>
@@ -1442,6 +1219,31 @@ const App = {
                 </div>
             `;
         }
+
+        const prevProj = document.getElementById('prev-projects');
+        if (prevProj) {
+            prevProj.innerHTML = '';
+            if (projTitle || projDesc) {
+                prevProj.innerHTML = `
+                    <div style="margin-bottom:8px;">
+                        <div style="font-weight:bold;">${projTitle || 'Project Title'}</div>
+                        <p style="margin-top:4px; font-size:12px; line-height:1.4; color:#333;">${projDesc || 'Project Description...'}</p>
+                    </div>
+                `;
+            } else {
+                prevProj.innerHTML = '<i>No projects added.</i>';
+            }
+        }
+
+        const prevCert = document.getElementById('prev-certifications');
+        if (prevCert) {
+            prevCert.innerHTML = '';
+            if (certifications.length > 0) {
+                prevCert.innerHTML = `<div style="line-height:1.4;">${certifications.join(', ')}</div>`;
+            } else {
+                prevCert.innerHTML = '<i>No certifications added.</i>';
+            }
+        }
         
         const prevSkills = document.getElementById('prev-skills');
         prevSkills.innerHTML = '';
@@ -1455,7 +1257,7 @@ const App = {
     async saveAndEvaluateResume() {
         const resumeData = {
             id: document.getElementById('res-id-holder').value || null,
-            template_name: document.getElementById('res-template-select').value,
+            template_name: 'Modern Minimalist',
             name: document.getElementById('res-name').value.trim(),
             email: document.getElementById('res-email').value.trim(),
             phone: document.getElementById('res-phone').value.trim(),
@@ -1466,7 +1268,8 @@ const App = {
                 {
                     school: document.getElementById('res-edu-school').value.trim(),
                     degree: document.getElementById('res-edu-degree').value.trim(),
-                    year: document.getElementById('res-edu-year').value.trim()
+                    year: document.getElementById('res-edu-year').value.trim(),
+                    cgpa: document.getElementById('res-edu-cgpa') ? document.getElementById('res-edu-cgpa').value.trim() : ''
                 }
             ],
             experience: [
@@ -1476,6 +1279,13 @@ const App = {
                     description: document.getElementById('res-exp-desc').value.trim()
                 }
             ],
+            projects: [
+                {
+                    title: document.getElementById('res-proj-title') ? document.getElementById('res-proj-title').value.trim() : '',
+                    description: document.getElementById('res-proj-desc') ? document.getElementById('res-proj-desc').value.trim() : ''
+                }
+            ],
+            certifications: document.getElementById('res-cert-name') ? document.getElementById('res-cert-name').value.split(',').map(c => c.trim()).filter(c => c) : [],
             target_career_id: document.getElementById('res-target-career').value
         };
         
@@ -1523,7 +1333,8 @@ const App = {
 
     editResume(resume) {
         document.getElementById('res-id-holder').value = resume.id;
-        document.getElementById('res-template-select').value = resume.template_name;
+        const templateSelect = document.getElementById('res-template-select');
+        if (templateSelect) templateSelect.value = resume.template_name;
         document.getElementById('res-name').value = resume.name;
         document.getElementById('res-email').value = resume.email;
         document.getElementById('res-phone').value = resume.phone;
@@ -1535,12 +1346,31 @@ const App = {
             document.getElementById('res-edu-school').value = resume.education[0].school || '';
             document.getElementById('res-edu-degree').value = resume.education[0].degree || '';
             document.getElementById('res-edu-year').value = resume.education[0].year || '';
+            const eduCgpa = document.getElementById('res-edu-cgpa');
+            if (eduCgpa) eduCgpa.value = resume.education[0].cgpa || '';
         }
         
         if (resume.experience.length > 0) {
             document.getElementById('res-exp-company').value = resume.experience[0].company || '';
             document.getElementById('res-exp-role').value = resume.experience[0].role || '';
             document.getElementById('res-exp-desc').value = resume.experience[0].description || '';
+        }
+
+        if (resume.projects && resume.projects.length > 0) {
+            const projTitle = document.getElementById('res-proj-title');
+            if (projTitle) projTitle.value = resume.projects[0].title || '';
+            const projDesc = document.getElementById('res-proj-desc');
+            if (projDesc) projDesc.value = resume.projects[0].description || '';
+        } else {
+            const projTitle = document.getElementById('res-proj-title');
+            if (projTitle) projTitle.value = '';
+            const projDesc = document.getElementById('res-proj-desc');
+            if (projDesc) projDesc.value = '';
+        }
+
+        const certNameField = document.getElementById('res-cert-name');
+        if (certNameField) {
+            certNameField.value = resume.certifications ? resume.certifications.join(', ') : '';
         }
         
         this.updateResumePreview();
@@ -1686,7 +1516,6 @@ const App = {
             document.getElementById('admin-total-users').innerText = metrics.users_count;
             document.getElementById('admin-total-resumes').innerText = metrics.resumes_count;
             document.getElementById('admin-total-jobs').innerText = metrics.jobs_count;
-            document.getElementById('admin-total-careers').innerText = metrics.careers_count;
 
             
             // Load admin jobs list
@@ -1995,8 +1824,9 @@ const App = {
         
         // Resume editor updates
         const resumeFields = ['res-name', 'res-email', 'res-phone', 'res-location', 'res-summary', 
-                            'res-edu-school', 'res-edu-degree', 'res-edu-year', 
-                            'res-exp-company', 'res-exp-role', 'res-exp-desc', 'res-skills'];
+                            'res-edu-school', 'res-edu-degree', 'res-edu-year', 'res-edu-cgpa',
+                            'res-exp-company', 'res-exp-role', 'res-exp-desc',
+                            'res-proj-title', 'res-proj-desc', 'res-cert-name', 'res-skills'];
         resumeFields.forEach(id => {
             const field = document.getElementById(id);
             if (field) field.addEventListener('input', () => this.updateResumePreview());
