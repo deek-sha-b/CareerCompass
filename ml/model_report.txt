@@ -7,10 +7,10 @@ Dataset: Kaggle Employee Salary Dataset (6,704 raw rows, cleaned to 6698 rows)
 Model Evaluation Summary:
 Model Name                     | R^2 Score  | MAE (INR)    | RMSE (INR)  
 ---------------------------------------------------------------------------
-Linear Regression              |    84.20% |     15,425 |     21,224
-Decision Tree Regressor        |    93.13% |      6,861 |     13,995
-Random Forest Regressor        |    94.30% |      5,974 |     12,753
-Gradient Boosting Regressor    |    90.33% |     12,407 |     16,604
+Linear Regression              |    83.69% |     17,793 |     23,346
+Decision Tree Regressor        |    93.08% |      8,154 |     15,204
+Random Forest Regressor        |    94.16% |      6,964 |     13,974
+Gradient Boosting Regressor    |    90.51% |     13,366 |     17,812
 
 ===========================================================================
 Selected Production Model: Random Forest Regressor

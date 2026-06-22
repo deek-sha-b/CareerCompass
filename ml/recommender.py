@@ -3,7 +3,7 @@ import math
 import os
 import pickle
 
-# Try importing numpy and scikit-learn for advanced mode, but fallback to pure Python
+
 try:
     import numpy as np
     from sklearn.feature_extraction.text import TfidfVectorizer

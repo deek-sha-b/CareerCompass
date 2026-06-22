@@ -92,6 +92,18 @@ def load_and_preprocess_data():
     locations = ['metro', 'non-metro', 'remote']
     df['location_type'] = np.random.choice(locations, size=len(df), p=[0.6, 0.3, 0.1])
     
+    # Adjust salary synthetically based on location to ensure Metro > Remote > Non-Metro
+    def adjust_salary(row):
+        base_sal = row['salary']
+        loc = row['location_type']
+        if loc == 'metro':
+            return int(base_sal * 1.15)
+        elif loc == 'non-metro':
+            return int(base_sal * 0.85)
+        else: # remote
+            return int(base_sal * 1.00)
+    df['salary'] = df.apply(adjust_salary, axis=1)
+    
     # Keep only target columns
     final_cols = ['role', 'stream', 'qualification', 'experience_years', 'skills_count', 'location_type', 'salary']
     df_clean = df[final_cols]
